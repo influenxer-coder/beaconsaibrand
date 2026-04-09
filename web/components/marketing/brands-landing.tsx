@@ -12,29 +12,134 @@ import {
   Users,
 } from "lucide-react";
 
+const BEACONS_I = "https://beacons.ai/i";
 const DEMO_FORM = "https://form.typeform.com/to/asCaQ4o6";
+const LOGIN_URL =
+  "https://account.beacons.ai/signin?originPage=home&cta_location=header&cta_text=log_in&referring_user=direct&referral_type=log_in";
+const SIGNUP_URL =
+  "https://account.beacons.ai/signup?originPage=home&cta_location=header&cta_text=sign_up&referring_user=direct&referral_type=sign_up";
+const REFERRAL_URL =
+  "https://beacons.notion.site/Become-a-Beacons-rep-6b71e53086334f94b2c4ea956fd947d3?pvs=4";
+const REPORT_VIOLATION_URL =
+  "https://beacons.notion.site/2242815a497f8008ab48dd50231339a9";
+const HELP_HOME = "https://help.beacons.ai/en";
+
+function beaconsPath(path: string) {
+  return `${BEACONS_I}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+const FAQ_QUESTIONS = [
+  "What is a creator gifting platform?",
+  "Is influencer gifting effective for beauty brands?",
+  "Can Beacons be used for paid creator campaigns?",
+  "How do beauty brands track ROI from influencer gifting?",
+  "How is Beacons different from other influencer marketing tools?",
+] as const;
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "Perplexity partners with creators who are deeply curious and gifted storytellers. Together, we bring to life the ways in which Perplexity satisfies curiosities, solves problems, and simplifies lives.",
+    name: "Will Brooke",
+    title: "Head of Talent Partnership, Perplexity",
+  },
+  {
+    quote:
+      "The Beacons brand portal has been such a time saver when it comes to finding quality content creators to work with for our launches!",
+    name: "Corsair",
+    title: null,
+  },
+  {
+    quote:
+      "We’re thrilled to partner with Beacons and their network of engaging, creative, and passionate creators who will bring our products to life in a fun and genuine way",
+    name: "Stanley",
+    title: null,
+  },
+  {
+    quote:
+      "As a pioneer in botanical beauty, Yves Rocher is thrilled to collaborate with Beacons.ai to empower creators who share our passion for sustainability and self-care. We can’t wait to see how their creativity inspires new ways to experience our products",
+    name: "Yves Rocher",
+    title: null,
+  },
+  {
+    quote:
+      "As a champion of local discovery and everyday adventure, Groupon is thrilled to partner with Beacons.ai to empower creators who share our passion for supporting small businesses and unforgettable experiences.",
+    name: "Groupon",
+    title: null,
+  },
+  {
+    quote:
+      "Sur La Table is the place for an unsurpassed selection of exclusive and premium-quality goods for the kitchen and table. We're excited to share our passion for cooking and entertaining with the Beacons.ai network of creators.",
+    name: "Sur La Table",
+    title: null,
+  },
+  {
+    quote:
+      "Beacons replaced the fragmented tools and manual workflows we used before by unifying our creator marketing process into one platform, reducing operational effort while increasing impact. It gives us end-to-end visibility across creators, content, gifting, and outcomes so we can make smarter, data-driven decisions. The team has been a strong partner throughout: responsive, thoughtful, and quick to build based on real brand needs.",
+    name: "Lucy",
+    title: "Irritated Skin",
+  },
+  {
+    quote:
+      "Beacons has been a great extension of our marketing team, helping us streamline and scale creator initiatives. We’ve significantly reduced the time spent building campaigns and onboarding creators, while gaining clearer visibility into what’s working. Their tools have helped us uncover blind spots so we can run more efficient, intentional creator campaigns.",
+    name: "Victoria",
+    title: "Victoria, Chemist Confessions",
+  },
+] as const;
 
 export function BrandsLanding() {
   return (
     <div className="min-h-screen bg-white text-zinc-900">
       <header className="sticky top-0 z-50 border-b border-zinc-200/80 bg-white/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2 font-semibold text-zinc-900">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+          <Link
+            href="/"
+            className="flex shrink-0 items-center gap-2 font-semibold text-zinc-900"
+          >
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-fuchsia-600 text-sm font-bold text-white">
               B
             </span>
             <span className="hidden sm:inline">Beacons</span>
           </Link>
-          <nav className="flex items-center gap-2 sm:gap-4">
-            <span className="hidden text-sm text-zinc-600 md:inline">
-              For Brands
-            </span>
-            <Link
-              href="/signin"
-              className="text-sm font-medium text-zinc-700 hover:text-zinc-900"
+          <nav className="hidden items-center gap-1 text-sm text-zinc-600 lg:flex">
+            <a
+              href="https://home.beacons.ai/"
+              className="rounded-md px-2 py-1 hover:bg-zinc-100 hover:text-zinc-900"
             >
-              Log in
-            </Link>
+              For Creators
+            </a>
+            <a
+              href={beaconsPath("managers")}
+              className="rounded-md px-2 py-1 hover:bg-zinc-100 hover:text-zinc-900"
+            >
+              For Managers
+            </a>
+            <a
+              href={beaconsPath("brands")}
+              className="rounded-md px-2 py-1 hover:bg-zinc-100 hover:text-zinc-900"
+            >
+              For Brands
+            </a>
+            <a
+              href={beaconsPath("pricing")}
+              className="rounded-md px-2 py-1 hover:bg-zinc-100 hover:text-zinc-900"
+            >
+              Pricing
+            </a>
+          </nav>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <a
+              href={LOGIN_URL}
+              className="hidden text-sm font-medium text-zinc-700 hover:text-zinc-900 sm:inline"
+            >
+              Login
+            </a>
+            <a
+              href={SIGNUP_URL}
+              className="hidden text-sm font-medium text-zinc-700 hover:text-zinc-900 md:inline"
+            >
+              Start for free
+            </a>
             <a
               href={DEMO_FORM}
               target="_blank"
@@ -43,7 +148,7 @@ export function BrandsLanding() {
             >
               Get a demo
             </a>
-          </nav>
+          </div>
         </div>
       </header>
 
@@ -72,13 +177,15 @@ export function BrandsLanding() {
                 Get a demo
                 <ArrowRight className="ml-2 h-4 w-4" />
               </a>
-              <Link
-                href="/signin"
-                className="inline-flex h-12 w-full max-w-xs items-center justify-center rounded-full border border-zinc-300 bg-white px-8 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50 sm:w-auto"
-              >
-                Log in
-              </Link>
             </div>
+
+            <figure className="mx-auto mt-14 max-w-5xl">
+              <div
+                className="aspect-[16/10] w-full rounded-2xl border border-zinc-200 bg-gradient-to-br from-zinc-100 to-zinc-50 shadow-xl shadow-zinc-200/60"
+                role="img"
+                aria-label="Business dashboard showing revenue, deals, customer list, growth chart, and new activity."
+              />
+            </figure>
 
             <div className="mx-auto mt-16 grid max-w-3xl grid-cols-1 gap-6 border-t border-zinc-200/80 pt-12 sm:grid-cols-3">
               {[
@@ -98,17 +205,17 @@ export function BrandsLanding() {
             <p className="mt-12 text-xs font-medium uppercase tracking-wider text-zinc-400">
               Trusted by
             </p>
-            <div className="mx-auto mt-6 flex max-w-3xl flex-wrap items-center justify-center gap-8 opacity-70 grayscale">
-              {["Brand A", "Brand B", "Brand C", "Brand D", "Brand E"].map(
-                (name) => (
-                  <div
-                    key={name}
-                    className="flex h-8 items-center text-sm font-semibold text-zinc-400"
-                  >
-                    {name}
-                  </div>
-                ),
-              )}
+            <div className="mx-auto mt-6 flex max-w-3xl flex-wrap items-center justify-center gap-x-10 gap-y-4 text-sm font-semibold text-zinc-400">
+              {[
+                "Perplexity",
+                "Corsair",
+                "Stanley",
+                "Yves Rocher",
+                "Groupon",
+                "Sur La Table",
+              ].map((name) => (
+                <span key={name}>{name}</span>
+              ))}
             </div>
           </div>
         </section>
@@ -172,9 +279,12 @@ export function BrandsLanding() {
               Tap into a creator ecosystem for brands, from a trusted name in
               the creator economy
             </h2>
-            <p className="mt-6 text-lg text-zinc-600">
-              With Beacons, you won&apos;t run out of options. Some creator
-              platforms have quality, some have reach. Beacons has both.
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-600">
+              <span className="block">With Beacons, you won&apos;t run out of options.</span>
+              <span className="mt-2 block">
+                Some creator platforms have quality, some have reach. Beacons has
+                both.
+              </span>
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <a
@@ -186,7 +296,7 @@ export function BrandsLanding() {
                 Book a demo
               </a>
               <a
-                href={DEMO_FORM}
+                href={SIGNUP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex h-11 items-center justify-center rounded-full border border-zinc-300 bg-white px-6 text-sm font-semibold text-zinc-900 hover:bg-zinc-100"
@@ -200,7 +310,8 @@ export function BrandsLanding() {
         <section className="border-b border-zinc-100 bg-white px-4 py-20 sm:px-6">
           <div className="mx-auto max-w-6xl">
             <h2 className="text-center text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
-              Why Brands Choose Beacons
+              <span className="block">Why Brands</span>
+              <span className="block">Choose Beacons</span>
             </h2>
             <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {[
@@ -238,7 +349,7 @@ export function BrandsLanding() {
                 Book a demo
               </a>
               <a
-                href={DEMO_FORM}
+                href={SIGNUP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex h-11 items-center justify-center rounded-full border border-white/40 bg-transparent px-6 text-sm font-semibold text-white hover:bg-white/10"
@@ -252,40 +363,23 @@ export function BrandsLanding() {
         <section className="border-b border-zinc-100 bg-white px-4 py-20 sm:px-6">
           <div className="mx-auto max-w-6xl">
             <h2 className="text-center text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
-              What Brand Partners Are Saying
+              <span className="block">What Brand Partners</span>
+              <span className="block">Are Saying</span>
             </h2>
             <p className="mt-3 text-center text-zinc-600">
               Real experiences from teams using Beacons to power creator
               campaigns
             </p>
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
-              {[
-                {
-                  quote:
-                    "Finally one place to see performance across creators and campaigns.",
-                  name: "Marketing Lead",
-                  co: "Beauty brand",
-                },
-                {
-                  quote:
-                    "The CRM view cut our coordination time down dramatically.",
-                  name: "Partnerships",
-                  co: "Retail",
-                },
-                {
-                  quote:
-                    "Reporting we can actually share with leadership—huge win.",
-                  name: "Brand Director",
-                  co: "Lifestyle",
-                },
-              ].map((t) => (
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {TESTIMONIALS.map((t) => (
                 <blockquote
-                  key={t.name}
+                  key={t.name + t.quote.slice(0, 24)}
                   className="rounded-2xl border border-zinc-200 bg-zinc-50/80 p-6"
                 >
                   <p className="text-zinc-700">&ldquo;{t.quote}&rdquo;</p>
-                  <footer className="mt-4 text-sm text-zinc-500">
-                    — {t.name}, {t.co}
+                  <footer className="mt-4 space-y-0.5 text-sm text-zinc-500">
+                    <div className="font-semibold text-zinc-800">{t.name}</div>
+                    {t.title ? <div>{t.title}</div> : null}
                   </footer>
                 </blockquote>
               ))}
@@ -298,50 +392,210 @@ export function BrandsLanding() {
             <h2 className="text-center text-2xl font-semibold text-zinc-900">
               Frequently Asked Questions
             </h2>
-            <div className="mt-8 space-y-2">
-              {[
-                "What is a creator gifting platform?",
-                "Is influencer gifting effective for beauty brands?",
-                "Can Beacons be used for paid creator campaigns?",
-                "How do beauty brands track ROI from influencer gifting?",
-                "How is Beacons different from other influencer marketing tools?",
-              ].map((q) => (
-                <details
+            <ul className="mt-8 space-y-3">
+              {FAQ_QUESTIONS.map((q) => (
+                <li
                   key={q}
-                  className="group rounded-xl border border-zinc-200 bg-white px-5 py-4"
+                  className="rounded-xl border border-zinc-200 bg-white px-5 py-4 text-left font-medium text-zinc-900"
                 >
-                  <summary className="cursor-pointer list-none font-medium text-zinc-900 after:float-right after:text-zinc-400 after:content-['+'] group-open:after:content-['−']">
-                    {q}
-                  </summary>
-                  <p className="mt-3 text-sm text-zinc-600">
-                    This prototype uses placeholder copy. Connect your help
-                    center or CMS for real answers.
-                  </p>
-                </details>
+                  {q}
+                </li>
               ))}
-            </div>
+            </ul>
+            <p className="mt-8 text-center">
+              <a
+                href={HELP_HOME}
+                className="text-sm font-medium text-violet-700 underline-offset-4 hover:underline"
+              >
+                Learn more
+              </a>
+            </p>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-zinc-200 bg-white px-4 py-10 sm:px-6">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 sm:flex-row">
-          <div className="flex items-center gap-2 font-semibold text-zinc-900">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-violet-600 to-fuchsia-600 text-xs font-bold text-white">
-              B
-            </span>
-            Beacons
+      <footer className="border-t border-zinc-200 bg-zinc-950 px-4 py-14 text-zinc-300 sm:px-6">
+        <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Learn more
+            </p>
+            <ul className="mt-4 space-y-2 text-sm">
+              <li>
+                <a href={beaconsPath("managers")} className="hover:text-white">
+                  Beacons for Managers
+                </a>
+              </li>
+              <li>
+                <a href={beaconsPath("brands")} className="hover:text-white">
+                  Beacons for Brands
+                </a>
+              </li>
+              <li>
+                <a href={beaconsPath("pricing")} className="hover:text-white">
+                  Pricing
+                </a>
+              </li>
+              <li>
+                <a href={beaconsPath("blog")} className="hover:text-white">
+                  Blog
+                </a>
+              </li>
+              <li>
+                <a href={REFERRAL_URL} className="hover:text-white">
+                  Referral Program
+                </a>
+              </li>
+              <li>
+                <a href={beaconsPath("resources")} className="hover:text-white">
+                  Resources
+                </a>
+              </li>
+              <li>
+                <a
+                  href={beaconsPath("brand-resource-center")}
+                  className="hover:text-white"
+                >
+                  Brand Resource Center
+                </a>
+              </li>
+            </ul>
           </div>
-          <div className="flex flex-wrap justify-center gap-6 text-sm text-zinc-500">
-            <a href="https://help.beacons.ai/" className="hover:text-zinc-800">
-              Help
-            </a>
-            <span>Privacy</span>
-            <span>Terms</span>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Legal
+            </p>
+            <ul className="mt-4 space-y-2 text-sm">
+              <li>
+                <a
+                  href={beaconsPath("terms-and-conditions")}
+                  className="hover:text-white"
+                >
+                  Terms of Service
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://beacons.ai/i/beacons-privacy-policy"
+                  className="hover:text-white"
+                >
+                  Privacy Policy
+                </a>
+              </li>
+              <li>
+                <a href={beaconsPath("cookie-notice")} className="hover:text-white">
+                  Cookie Notice
+                </a>
+              </li>
+              <li>
+                <a href={REPORT_VIOLATION_URL} className="hover:text-white">
+                  Report Violation
+                </a>
+              </li>
+              <li>
+                <a
+                  href={beaconsPath("community-standards")}
+                  className="hover:text-white"
+                >
+                  Community Standards
+                </a>
+              </li>
+            </ul>
           </div>
-          <p className="text-xs text-zinc-400">
-            Demo UI — not affiliated with Beacons, Inc.
-          </p>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Beacons
+            </p>
+            <ul className="mt-4 space-y-2 text-sm">
+              <li>
+                <a href={beaconsPath("about-us")} className="hover:text-white">
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a href={beaconsPath("careers")} className="hover:text-white">
+                  Careers
+                </a>
+              </li>
+              <li>
+                <a href={HELP_HOME} className="hover:text-white">
+                  Help Center
+                </a>
+              </li>
+            </ul>
+            <p className="mt-6 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Creator Tools
+            </p>
+            <ul className="mt-3 space-y-2 text-sm">
+              <li>
+                <a
+                  href={beaconsPath("app-pages/link-in-bio")}
+                  className="hover:text-white"
+                >
+                  Link in Bio
+                </a>
+              </li>
+              <li>
+                <a
+                  href={beaconsPath("app-pages/store")}
+                  className="hover:text-white"
+                >
+                  Store
+                </a>
+              </li>
+              <li>
+                <a
+                  href={beaconsPath("app-pages/email-marketing")}
+                  className="hover:text-white"
+                >
+                  Email Marketing
+                </a>
+              </li>
+              <li>
+                <a
+                  href={beaconsPath("app-pages/media-kit")}
+                  className="hover:text-white"
+                >
+                  Media Kit
+                </a>
+              </li>
+              <li>
+                <a
+                  href={beaconsPath("app-pages/income-dashboard")}
+                  className="hover:text-white"
+                >
+                  Income Dashboard
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div className="flex flex-col justify-between gap-8">
+            <div className="flex items-center gap-2 font-semibold text-white">
+              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-violet-600 to-fuchsia-600 text-xs font-bold text-white">
+                B
+              </span>
+              Beacons
+            </div>
+            <div className="text-sm">
+              <p className="text-zinc-400">Need help?</p>
+              <a
+                href="mailto:support@beacons.ai"
+                className="mt-1 block font-medium text-white hover:underline"
+              >
+                support@beacons.ai
+              </a>
+            </div>
+            <p className="text-sm text-zinc-400">
+              <a href={HELP_HOME} className="hover:text-white">
+                Ask AI about Beacons
+              </a>
+            </p>
+          </div>
+        </div>
+        <div className="mx-auto mt-12 max-w-6xl border-t border-zinc-800 pt-8 text-center text-xs text-zinc-500">
+          <Link href="/signin" className="hover:text-zinc-300">
+            App sign in (demo)
+          </Link>
         </div>
       </footer>
     </div>
