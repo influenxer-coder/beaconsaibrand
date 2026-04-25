@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Live — Beacons for Brands</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: #2a2a2a;
+    --accent: #6c47ff;
+    --accent-light: #8b6bff;
+    --accent-glow: rgba(108,71,255,0.15);
+    --text: #f5f5f5;
+    --muted: #888;
+    --muted2: #555;
+    --green: #22c55e;
+    --green-bg: rgba(34,197,94,0.1);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; min-height: 100vh; }
+
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 60px; border-bottom: 1px solid var(--border);
+    background: var(--bg); position: sticky; top: 0; z-index: 10;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 17px; letter-spacing: -0.3px; }
+  .logo-dot { width: 22px; height: 22px; background: var(--accent); border-radius: 6px; }
+  .nav-links { display: flex; gap: 6px; }
+  .nav-link { padding: 6px 14px; border-radius: var(--radius-sm); font-size: 13px; color: var(--muted); cursor: pointer; transition: color 0.2s; }
+  .nav-link:hover { color: var(--text); }
+  .nav-link.active { color: var(--text); background: var(--surface2); }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #6c47ff, #a78bfa); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+
+  .layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 60px); }
+
+  aside { border-right: 1px solid var(--border); padding: 24px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .aside-label { font-size: 10px; font-weight: 600; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.8px; padding: 8px 10px 4px; }
+  .aside-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius-sm); font-size: 13px; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+  .aside-item:hover { color: var(--text); background: var(--surface2); }
+  .aside-item.active { color: var(--text); background: var(--surface2); }
+  .aside-item svg { opacity: 0.6; flex-shrink: 0; }
+  .aside-item.active svg { opacity: 1; }
+  .badge { margin-left: auto; background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 20px; }
+
+  main { padding: 40px 48px; max-width: 860px; }
+
+  .page-header { margin-bottom: 36px; }
+  .page-header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+  .page-header p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+  .checklist { display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
+  .check-item { display: flex; align-items: center; gap: 14px; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); transition: border-color 0.2s; }
+  .check-item.done { border-color: rgba(34,197,94,0.25); }
+  .check-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .check-icon.done { background: var(--green-bg); }
+  .check-icon.done svg { color: var(--green); }
+  .check-icon.pending { background: var(--surface2); border: 1.5px dashed var(--muted2); }
+  .check-body { flex: 1; }
+  .check-body strong { font-size: 14px; font-weight: 600; display: block; margin-bottom: 2px; }
+  .check-body span { font-size: 12px; color: var(--muted); }
+  .check-action { font-size: 12px; color: var(--accent-light); font-weight: 500; cursor: pointer; white-space: nowrap; }
+
+  .preview-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 36px; }
+  .preview-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .preview-header span { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
+  .preview-url { font-size: 12px; color: var(--muted2); background: var(--surface2); padding: 4px 10px; border-radius: 20px; }
+  .preview-body { padding: 28px; display: flex; gap: 24px; align-items: flex-start; }
+  .brand-thumb { width: 64px; height: 64px; border-radius: 14px; background: linear-gradient(135deg, #6c47ff 0%, #a78bfa 100%); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: #fff; }
+  .brand-info h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .brand-info p { font-size: 13px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+  .brand-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-size: 11px; padding: 3px 10px; border-radius: 20px; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+  .metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 36px; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+  .metric-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .metric-value { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+  .metric-sub { font-size: 11px; color: var(--green); margin-top: 4px; }
+
+  .cta-bar { display: flex; align-items: center; gap: 14px; padding: 24px; background: var(--accent-glow); border: 1px solid rgba(108,71,255,0.3); border-radius: var(--radius); }
+  .cta-bar-text { flex: 1; }
+  .cta-bar-text strong { font-size: 15px; font-weight: 600; display: block; margin-bottom: 3px; }
+  .cta-bar-text span { font-size: 13px; color: var(--muted); }
+  .btn-primary { background: var(--accent); color: #fff; border: none; padding: 12px 24px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
+  .btn-primary:hover { background: var(--accent-light); }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 12px 18px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><div class="logo-dot"></div> beacons</div>
+  <div class="nav-links">
+    <div class="nav-link">Discover</div>
+    <div class="nav-link">Campaigns</div>
+    <div class="nav-link active">Brand Page</div>
+    <div class="nav-link">Analytics</div>
+  </div>
+  <div class="nav-right">
+    <div class="avatar">MK</div>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside>
+    <div class="aside-label">Setup</div>
+    <div class="aside-item done">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7L9 18l-5-5"/></svg> Brand Profile
+    </div>
+    <div class="aside-item done">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7L9 18l-5-5"/></svg> Team & Roles
+    </div>
+    <div class="aside-item done">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7L9 18l-5-5"/></svg> Approval Workflow
+    </div>
+    <div class="aside-item active">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg> Go Live
+      <div class="badge">Now</div>
+    </div>
+    <div class="aside-label" style="margin-top:12px">Manage</div>
+    <div class="aside-item">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/></svg> Campaigns
+    </div>
+    <div class="aside-item">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg> Creators
+    </div>
+    <div class="aside-item">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Attribution
+    </div>
+  </aside>
+
+  <main>
+    <div class="page-header">
+      <h1>You're ready to go live 🚀</h1>
+      <p>Your brand page lets creators discover you, apply to campaigns, and see your conversion data — no checkout required.</p>
+    </div>
+
+    <div class="checklist">
+      <div class="check-item done">
+        <div class="check-icon done"><svg width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 7L9 18l-5-5"/></svg></div>
+        <div class="check-body"><strong>Brand profile complete</strong><span>Logo, bio, and category added</span></div>
+      </div>
+      <div class="check-item done">
+        <div class="check-icon done"><svg width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 7L9 18l-5-5"/></svg></div>
+        <div class="check-body"><strong>Team invite sent</strong><span>2 teammates added — Sarah (Admin), James (Reviewer)</span></div>
+      </div>
+      <div class="check-item done">
+        <div class="check-icon done"><svg width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 7L9 18l-5-5"/></svg></div>
+        <div class="check-body"><strong>First approval workflow completed</strong><span>1 creator deliverable reviewed and approved</span></div>
+      </div>
+      <div class="check-item">
+        <div class="check-icon pending"></div>
+        <div class="check-body"><strong>Publish brand page</strong><span>Make your page visible to creators in the marketplace</span></div>
+        <div class="check-action">Pending →</div>
+      </div>
+    </div>
+
+    <div class="preview-card">
+      <div class="preview-header">
+        <span>Page Preview</span>
+        <div class="preview-url">beacons.ai/brands/luminary</div>
+      </div>
+      <div class="preview-body">
+        <div class="brand-
