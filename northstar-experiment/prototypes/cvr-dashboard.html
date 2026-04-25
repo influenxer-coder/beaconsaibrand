@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CVR Dashboard — Beacons for Brands</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c27;
+    --border: #2a2a3a;
+    --accent: #7c5cfc;
+    --accent2: #a78bfa;
+    --green: #22c55e;
+    --green-dim: #16a34a22;
+    --red: #f87171;
+    --text: #f0f0f8;
+    --muted: #8888aa;
+    --radius: 12px;
+    --font: 'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; display: flex; flex-direction: column; }
+  a { color: inherit; text-decoration: none; }
+
+  /* NAV */
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 10; }
+  .nav-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 17px; letter-spacing: -0.3px; }
+  .nav-logo span { color: var(--accent2); }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-links a { padding: 6px 14px; border-radius: 8px; font-size: 13px; color: var(--muted); transition: color .15s, background .15s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--text); background: var(--surface2); }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #7c5cfc, #a78bfa); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+  .btn-primary { background: var(--accent); color: #fff; border: none; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity .15s; }
+  .btn-primary:hover { opacity: .85; }
+
+  /* LAYOUT */
+  .shell { display: flex; flex: 1; }
+  aside { width: 220px; border-right: 1px solid var(--border); padding: 24px 16px; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+  .sidebar-label { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; padding: 12px 10px 6px; }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; font-size: 13px; color: var(--muted); cursor: pointer; transition: all .15s; }
+  .sidebar-item:hover { color: var(--text); background: var(--surface2); }
+  .sidebar-item.active { color: var(--text); background: var(--surface2); font-weight: 600; }
+  .sidebar-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+  main { flex: 1; padding: 32px 36px; overflow-y: auto; }
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; }
+  .page-title { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+  .page-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+  .btn-ghost { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; }
+
+  /* PROOF BANNER */
+  .proof-banner { background: linear-gradient(135deg, #7c5cfc18, #a78bfa10); border: 1px solid #7c5cfc44; border-radius: var(--radius); padding: 18px 24px; margin-bottom: 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .proof-text strong { color: var(--accent2); font-size: 15px; }
+  .proof-text p { font-size: 13px; color: var(--muted); margin-top: 3px; }
+  .proof-cta { background: var(--accent); color: #fff; border: none; padding: 10px 22px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
+  .proof-cta:hover { opacity: .85; }
+
+  /* KPI CARDS */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+  .kpi-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; }
+  .kpi-value { font-size: 28px; font-weight: 800; letter-spacing: -1px; }
+  .kpi-delta { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; margin-top: 6px; padding: 2px 8px; border-radius: 20px; }
+  .kpi-delta.up { color: var(--green); background: var(--green-dim); }
+  .kpi-delta.down { color: var(--red); background: #f8717122; }
+
+  /* CHART AREA */
+  .chart-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 28px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+  .card-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .card-sub { font-size: 12px; color: var(--muted); margin-bottom: 18px; }
+  .chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 100px; }
+  .bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+  .bar { width: 100%; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, var(--accent), #5b3fd4); opacity: .85; transition: opacity .15s; cursor: pointer; }
+  .bar:hover { opacity: 1; }
+  .bar-label { font-size: 9px; color: var(--muted); }
+  .funnel { display: flex; flex-direction: column; gap: 10px; }
+  .funnel-row { display: flex; align-items: center; gap: 10px; }
+  .funnel-label { font-size: 12px; color: var(--muted); width: 80px; flex-shrink: 0; }
+  .funnel-track { flex: 1; background: var(--surface2); border-radius: 4px; height: 10px; overflow: hidden; }
+  .funnel-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .funnel-pct { font-size: 12px; font-weight: 700; width: 36px; text-align: right; }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; cursor: pointer; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td { padding: 13px 14px; }
+  .creator-cell { display: flex; align-items: center; gap: 10px; }
+  .creator-av { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge.approved { background: var(--green-dim); color: var(--green); }
+  .badge.pending { background: #f59e0b22; color: #f59e0b; }
+  .badge.review { background: #7c5cfc22; color: var(--accent2); }
+  .lock-overlay { position: relative; }
+  .lock-overlay::after { content: '🔒'; position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 12px; opacity: .5; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">beacons <span>brands</span></div>
+  <div class="nav-links">
+    <a href="#">Discover</a>
+    <a href="#">Campaigns</a>
+    <a href="#" class="active">Analytics</a>
+    <a href="#">Team</a>
+  </div>
+  <div class="nav-right">
+    <div class="avatar">MK</div>
+    <button class="btn-primary">+ Invite teammate</button>
+  </div>
+</nav>
+
+<div class="shell">
+  <aside>
+    <div class="sidebar-label">Analytics</div>
+    <div class="sidebar-item active"><div class="dot"></div> CVR Dashboard</div>
+    <div class="sidebar-item">📊 Campaign ROI</div>
+    <div class="sidebar-item">🔗 Link Attribution</div>
+    <div class="sidebar-item">👥 Audience Overlap</div>
+    <div class="sidebar-label">Workflows</div>
+    <div class="sidebar-item">✅ Approvals</div>
+    <div class="sidebar-item">📋 Content Review</div>
+    <div class="sidebar-item">⚙️ Integrations</div>
+  </aside>
+
+  <main>
+    <div class="page-header">
+      <div>
+        <div class="page-title">Conversion Rate Dashboard</div>
+        <div class="page-sub">UTM passthrough · Shopify webhook · No checkout required</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-ghost">Last 30 days ▾</button>
+        <button class="btn-ghost">Export CSV</button>
+      </div>
+    </div>
+
+    <div class="proof-banner">
+      <div class="proof-text">
+        <strong>+34% CVR lift detected across 3 active creator campaigns</strong>
+        <p>Attribution is live via UTM passthrough — no checkout integration needed to see purchase data.</p>
+      </div>
+      <button class="proof-cta">View attribution data →</button>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Clicks</div>
+        <div class="kpi-value">142,880</div>
+        <div class="kpi-delta up">↑ 18% vs prior period</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Attributed Purchases</div>
+        <div class="kpi-value">4,312</div>
+        <div class="kpi-delta up">↑ 34% vs prior period</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Blended CVR</div>
+        <div class="kpi-value">3.02%</div>
+        <div class="kpi-delta up">↑ 0.8pp</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Revenue Attributed</div>
+        <div class="kpi-value">$218K</div>
+        <div class="kpi-delta up">↑ 41% vs prior period</div>
+      </div>
+    </div>
+
+    <div class="chart-row">
+      <div class="card">
+        <div class="card-title">Daily Attributed Conversions</div>
+        <div class="card-sub">Across all active creator links · last 14 days</div>
+        <div class="chart-bars">
+          <div class="bar-wrap"><div class="bar" style="height:42%"></div><div class="bar-label">Jul 1</div></div>
+          <div class="bar-wrap"><div class="bar" style="height:55%"></div><div class="bar-label">2</div></div>
+          <div class="bar-wrap"><div class="bar" style="height:48%"></div><div class="bar-label">3</div></div>
+          <div class="bar-wrap"><div class="bar" style="height:70%"></div><div class="bar-label">4</div></div>
+          <div class="bar-wrap"><div class="bar" style="height:63%"></div><div class="bar-label">5</div></div>
+          <div class="bar-wrap"><div class="bar" style="height:80%"></div><div class="bar-label">6</div></div>
+          <div class="bar-wrap"><div class="bar" style="height:74%"></div><div class="bar-label">7</div>
