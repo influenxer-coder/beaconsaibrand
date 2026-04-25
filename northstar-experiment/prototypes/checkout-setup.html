@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beacons — Brand Admin Portal</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c27;
+    --border: #2a2a3d;
+    --accent: #7c5cfc;
+    --accent-soft: rgba(124,92,252,0.12);
+    --accent2: #00d4aa;
+    --text: #f0f0f8;
+    --muted: #7b7b9a;
+    --danger: #ff4d6d;
+    --success: #00d4aa;
+    --warn: #f5a623;
+    --radius: 12px;
+    --font: 'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; display: flex; flex-direction: column; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; border-bottom: 1px solid var(--border); background: var(--surface); }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; letter-spacing: -0.4px; }
+  .logo-dot { width: 28px; height: 28px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .nav-tabs { display: flex; gap: 4px; }
+  .nav-tab { padding: 6px 14px; border-radius: 8px; font-size: 13px; color: var(--muted); cursor: pointer; transition: all .15s; border: none; background: none; }
+  .nav-tab.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,#7c5cfc,#00d4aa); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+  .layout { display: flex; flex: 1; }
+  .sidebar { width: 220px; border-right: 1px solid var(--border); padding: 24px 16px; display: flex; flex-direction: column; gap: 4px; background: var(--surface); }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 9px; font-size: 13px; color: var(--muted); cursor: pointer; transition: all .15s; }
+  .sidebar-item:hover { background: var(--surface2); color: var(--text); }
+  .sidebar-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .sidebar-item .icon { font-size: 15px; width: 18px; text-align: center; }
+  .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--muted); padding: 16px 12px 6px; text-transform: uppercase; }
+  .main { flex: 1; padding: 40px 48px; overflow-y: auto; }
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 36px; }
+  .page-title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+  .page-sub { font-size: 14px; color: var(--muted); margin-top: 4px; }
+  .removed-banner { background: linear-gradient(135deg, rgba(124,92,252,0.15), rgba(0,212,170,0.08)); border: 1px solid var(--accent); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 36px; display: flex; align-items: flex-start; gap: 20px; }
+  .banner-icon { font-size: 32px; flex-shrink: 0; margin-top: 2px; }
+  .banner-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .banner-desc { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 560px; }
+  .banner-cta { margin-top: 16px; display: flex; gap: 10px; align-items: center; }
+  .btn-primary { background: var(--accent); color: #fff; border: none; padding: 10px 20px; border-radius: 9px; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity .15s; }
+  .btn-primary:hover { opacity: .85; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 10px 20px; border-radius: 9px; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .metrics-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 28px; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; }
+  .metric-label { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
+  .metric-val { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+  .metric-delta { font-size: 12px; color: var(--success); margin-top: 4px; }
+  .metric-delta.warn { color: var(--warn); }
+  .section-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+  .proof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .proof-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
+  .proof-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+  .badge.live { background: rgba(0,212,170,.15); color: var(--success); }
+  .badge.removed { background: rgba(255,77,109,.12); color: var(--danger); text-decoration: line-through; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px; }
+  .bar-label { width: 90px; color: var(--muted); font-size: 12px; }
+  .bar-track { flex: 1; height: 7px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-val { font-size: 12px; font-weight: 600; width: 36px; text-align: right; }
+  .strikethrough { text-decoration: line-through; color: var(--muted); }
+  .tag-removed { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; background: rgba(255,77,109,.1); color: var(--danger); border: 1px solid rgba(255,77,109,.25); border-radius: 6px; padding: 2px 8px; margin-left: 8px; }
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo"><div class="logo-dot">✦</div> Beacons <span style="font-size:11px;font-weight:500;color:var(--muted);margin-left:4px;">for Brands</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab">Discover</button>
+    <button class="nav-tab active">Admin Portal</button>
+    <button class="nav-tab">Campaigns</button>
+    <button class="nav-tab">Analytics</button>
+  </div>
+  <div class="nav-right">
+    <span style="font-size:12px;color:var(--muted);">Glossier Inc.</span>
+    <div class="avatar">GL</div>
+  </div>
+</nav>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">Workspace</div>
+    <div class="sidebar-item"><span class="icon">🏠</span> Overview</div>
+    <div class="sidebar-item active"><span class="icon">⚙️</span> Settings</div>
+    <div class="sidebar-item"><span class="icon">👥</span> Team</div>
+    <div class="sidebar-label">Conversions</div>
+    <div class="sidebar-item"><span class="icon">📊</span> Attribution</div>
+    <div class="sidebar-item"><span class="icon">🔗</span> UTM Builder</div>
+    <div class="sidebar-item"><span class="icon">✅</span> Approvals</div>
+    <div class="sidebar-label">Integrations</div>
+    <div class="sidebar-item"><span class="icon">🛍️</span> Shopify</div>
+    <div class="sidebar-item"><span class="icon">📦</span> Klaviyo</div>
+  </aside>
+  <main class="main">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Checkout Setup <span class="tag-removed">✕ Removed</span></div>
+        <div class="page-sub">This step is no longer required to measure creator-driven conversions.</div>
+      </div>
+    </div>
+
+    <div class="removed-banner">
+      <div class="banner-icon">🚀</div>
+      <div>
+        <div class="banner-title">You don't need checkout to prove CVR lift.</div>
+        <div class="banner-desc">Beacons now attributes creator-driven purchases directly through UTM passthrough and your existing Shopify webhook — no PCI scope, no checkout rebuild. Brands using the Admin Portal see <strong style="color:var(--accent)">+34% CVR lift</strong> measured before a single checkout line of code is touched.</div>
+        <div class="banner-cta">
+          <button class="btn-primary">Connect Shopify instead →</button>
+          <button class="btn-ghost">View attribution docs</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="metric-label">Creator-Attributed Revenue (30d)</div>
+        <div class="metric-val">$284,190</div>
+        <div class="metric-delta">↑ 34% vs prior period</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Link-Click → Purchase CVR</div>
+        <div class="metric-val">6.8%</div>
+        <div class="metric-delta">↑ 2.1pts — no checkout required</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Approvals Completed (this week)</div>
+        <div class="metric-val">47</div>
+        <div class="metric-delta warn">3 pending review</div>
+      </div>
+    </div>
+
+    <div class="section-title">Conversion Proof — Checkout vs. Portal-First Attribution</div>
+    <div class="proof-grid">
+      <div class="proof-card">
+        <div class="proof-card-header">
+          <span style="font-size:14px;font-weight:700;">Checkout-Gated Flow</span>
+          <span class="badge removed">Removed</span>
+        </div>
+        <div class="bar-row"><span class="bar-label strikethrough">Setup time</span><div class="bar-track"><div class="bar-fill" style="width:90%;background:var(--danger)"></div></div><span class="bar-val strikethrough">14d</span></div>
+        <div class="bar-row"><span class="bar-label strikethrough">CVR lift</span><div class="bar-track"><div class="bar-fill" style="width:28%;background:var(--danger)"></div></div><span class="bar-val strikethrough">1.9%</span></div>
+        <div class="bar-row"><span class="bar-label strikethrough">Activation</span><div class="bar-track"><div class="bar-fill" style="width:22%;background:var(--danger)"></div></div><span class="bar-val strikethrough">22%</span></div>
+        <div style="margin-top:14px;font-size:12px;color:var(--muted);">Brands stalled at checkout config. Most never activated.</div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-card-header">
+          <span style="font-size:14px;font-weight:700;">Admin Portal + UTM Flow</span>
+          <span class="badge live">Live now</span>
+        </div>
+        <div class="bar-row"><span class="bar-label">Setup time</span><div class="bar-track"><div class="bar-fill" style="width:18%;background:var(--success)"></div></div><span class="bar-val">~2h</span></div>
+        <div class="bar-row"><span class="bar-label">CVR lift</span><div class="bar-track"><div class="bar-fill" style="width:68%;background:var(--success)"></div></div><span class="bar-val">6.8%</span></div>
+        <div class="bar-row"><span class="bar-label">Activation</span><div class="bar-track"><div class="bar-fill" style="width:87%;background:var(--success)"></div></div><span class="bar-val">87%</span></div>
+        <div style="margin-top:14px;font-size:12px;color:var(--muted);">Team invite + first approval = full attribution unlocked.</div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>
