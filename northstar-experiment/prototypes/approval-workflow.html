@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Approval Workflow — Beacons for Brands</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c27;
+    --border: #2a2a3d;
+    --accent: #7c5cfc;
+    --accent-soft: rgba(124,92,252,0.12);
+    --accent2: #f97316;
+    --text: #f0f0f8;
+    --muted: #8888aa;
+    --green: #22c55e;
+    --green-soft: rgba(34,197,94,0.12);
+    --radius: 12px;
+    --font: 'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; display: flex; flex-direction: column; }
+  a { color: inherit; text-decoration: none; }
+
+  /* NAV */
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; border-bottom: 1px solid var(--border); background: var(--surface); }
+  .nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; letter-spacing: -0.3px; }
+  .nav-logo span { width: 28px; height: 28px; background: var(--accent); border-radius: 8px; display: grid; place-items: center; font-size: 14px; }
+  .nav-links { display: flex; gap: 28px; font-size: 13.5px; color: var(--muted); }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a.active { color: var(--text); font-weight: 500; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,#7c5cfc,#f97316); display: grid; place-items: center; font-size: 12px; font-weight: 600; }
+  .badge { background: var(--accent-soft); color: var(--accent); font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; border: 1px solid rgba(124,92,252,0.25); }
+
+  /* LAYOUT */
+  .shell { display: flex; flex: 1; }
+  aside { width: 220px; border-right: 1px solid var(--border); background: var(--surface); padding: 24px 0; flex-shrink: 0; }
+  .aside-section { padding: 0 16px 20px; }
+  .aside-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; padding: 0 8px 8px; }
+  .aside-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; font-size: 13.5px; color: var(--muted); cursor: pointer; transition: all .15s; }
+  .aside-item:hover { background: var(--surface2); color: var(--text); }
+  .aside-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 500; }
+  .aside-item .icon { font-size: 15px; width: 18px; text-align: center; }
+  .aside-item .pill { margin-left: auto; background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
+
+  main { flex: 1; padding: 36px 40px; overflow-y: auto; }
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 32px; }
+  .page-title { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+  .page-sub { font-size: 13.5px; color: var(--muted); margin-top: 4px; }
+  .btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: 9px; font-size: 13.5px; font-weight: 600; cursor: pointer; border: none; transition: all .15s; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #6b4de6; }
+  .btn-ghost { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+
+  /* STATS ROW */
+  .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
+  .stat-label { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
+  .stat-val { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+  .stat-delta { font-size: 12px; margin-top: 4px; }
+  .up { color: var(--green); }
+  .stat-card.highlight { border-color: rgba(124,92,252,0.4); background: var(--accent-soft); }
+  .stat-card.highlight .stat-val { color: var(--accent); }
+
+  /* CONTENT GRID */
+  .content-grid { display: grid; grid-template-columns: 1fr 360px; gap: 24px; }
+
+  /* SUBMISSIONS TABLE */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--border); }
+  .card-title { font-size: 14px; font-weight: 600; }
+  .filter-tabs { display: flex; gap: 4px; }
+  .tab { padding: 5px 12px; border-radius: 7px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--muted); }
+  .tab.active { background: var(--surface2); color: var(--text); }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; padding: 12px 22px; border-bottom: 1px solid var(--border); }
+  td { padding: 14px 22px; font-size: 13.5px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+  .creator-cell { display: flex; align-items: center; gap: 10px; }
+  .creator-av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .creator-name { font-weight: 500; font-size: 13.5px; }
+  .creator-handle { font-size: 11.5px; color: var(--muted); }
+  .status-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 600; }
+  .status-pending { background: rgba(249,115,22,0.12); color: #f97316; }
+  .status-approved { background: var(--green-soft); color: var(--green); }
+  .status-review { background: rgba(124,92,252,0.12); color: var(--accent); }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .action-btns { display: flex; gap: 6px; }
+  .btn-xs { padding: 5px 11px; font-size: 12px; border-radius: 7px; font-weight: 600; cursor: pointer; border: none; }
+  .btn-approve { background: var(--green-soft); color: var(--green); }
+  .btn-approve:hover { background: rgba(34,197,94,0.22); }
+  .btn-reject { background: rgba(239,68,68,0.1); color: #ef4444; }
+  .btn-reject:hover { background: rgba(239,68,68,0.2); }
+
+  /* SUBMIT PANEL */
+  .panel { display: flex; flex-direction: column; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .form-input, .form-select, .form-textarea { background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; padding: 10px 14px; font-size: 13.5px; color: var(--text); font-family: var(--font); outline: none; transition: border .15s; width: 100%; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+  .form-textarea { resize: none; height: 80px; }
+  .form-select option { background: var(--surface2); }
+  .upload-zone { border: 2px dashed var(--border); border-radius: 10px; padding: 24px; text-align: center; cursor: pointer; transition: border .15s; }
+  .upload-zone:hover { border-color: var(--accent); }
+  .upload-icon { font-size: 24px; margin-bottom: 8px; }
+  .upload-text { font-size: 13px; color: var(--muted); }
+  .upload-text strong { color: var(--accent); }
+  .cvr-preview { background: var(--accent-soft); border: 1px solid rgba(124,92,252,0.25); border-radius: 10px; padding: 14px 16px; }
+  .cvr-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+  .cvr-row + .cvr-row { margin-top: 8px; }
+  .cvr-label { color: var(--muted); }
+  .cvr-val { font-weight: 600; color: var(--accent); }
+  .submit-btn { width: 100%; padding: 12px; font-size: 14px; font-weight: 700; background: var(--accent); color: #fff; border: none; border-radius: 10px; cursor: pointer; transition: background .15s; }
+  .submit-btn:hover { background: #6b4de6; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><span>✦</span> Beacons for Brands</div>
+  <div class="nav-links">
+    <a href="#">Discover</a>
+    <a href="#">Campaigns</a>
+    <a href="#" class="active">Approvals</a>
+    <a href="#">Analytics</a>
+    <a href="#">Payments</a>
+  </div>
+  <div class="nav-right">
+    <span class="badge">Admin</span>
+    <div class="avatar">KL</div>
+  </div>
+</nav>
+
+<div class="shell">
+  <aside>
+    <div class="aside-section">
+      <div class="aside-label">Workspace</div>
+      <div class="aside-item"><span class="icon">🏠</span> Overview</div>
+      <div class="aside-item"><span class="icon">👥</span> Team <span class="pill">3</span></div>
+      <div class="aside-item active"><span class="icon">✅</span> Approvals <span class="pill">5</span></div>
+      <div class="aside-item"><span class="icon">📊</span> CVR Reports</div>
+    </div>
+    <div class="aside-section">
+      <div class="aside-label">Campaigns</div>
+      <div class="aside-item"><span class="icon">🚀</span> Summer Drop</div>
+      <div class="aside-item"><span class="icon">🎯</span> Back to School</div>
+      <div class="aside-item"><span class="icon">➕</span> New Campaign</div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="page-header">
+      <div>
+        <div class="page-title">Content Approval Workflow</div>
+        <div class="page-sub">Review creator deliverables before they go live — no checkout required to track CVR lift.</div>
+      </div>
+      <button class="btn btn-ghost">⬇ Export Report</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card highlight">
+        <div class="stat-label">Pending Review</div>
+        <div class="stat-val">5</div>
+        <div class="stat-delta up">↑ 2 since yesterday</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Approved This Month</div>
+        <div class="stat-val">34</div>
+        <div class="stat-delta up">↑ 18% vs last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg. CVR Lift (approved)</div>
+        <div class="stat-val">+3.2×</div>
+        <div class="stat-delta up">↑ vs brand baseline</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Revenue Attributed</div>
+        <div class="stat-val">$84k</div>
+        <div class="stat-delta up">↑ UTM-verified</div>
